@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header card">
+    <h2>Preprocessing Pipeline Setup</h2>
+    <p>Configure how AutoANN prepares your data before building the neural network.</p>
+</div>
+
+<div class="card">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Target Column</h3>
+            <div class="value" style="font-size: 1.25rem;">{{ target_column }}</div>
+        </div>
+        <div class="stat-card">
+            <h3>Detected Problem Type</h3>
+            <div class="value" style="font-size: 1.25rem; color: var(--primary-color);">{{ problem_type }}</div>
+        </div>
+    </div>
+
+    <form action="{{ url_for('build_model') }}" method="POST" style="margin-top: 2rem;">
+        <h3>Problem Type Override</h3>
+        <p style="margin-bottom: 1rem; color: var(--text-light);">AutoANN automatically detects the problem type based
+            on the target column, but you can override it if necessary.</p>
+        <select name="problem_type" class="select-input">
+            <option value="Classification" {% if problem_type=='Classification' %}selected{% endif %}>Classification
+            </option>
+            <option value="Regression" {% if problem_type=='Regression' %}selected{% endif %}>Regression</option>
+        </select>
+
+        <h3 style="margin-top: 2rem;">Train/Test Split</h3>
+        <p style="margin-bottom: 1rem; color: var(--text-light);">Choose how to split your dataset. The training set is
+            used to train the model, while the test set evaluates its performance on unseen data.</p>
+        <select name="test_size" class="select-input">
+            <option value="0.2">80% Train / 20% Test (Recommended)</option>
+            <option value="0.25">75% Train / 25% Test</option>
+            <option value="0.3">70% Train / 30% Test</option>
+            <option value="0.1">90% Train / 10% Test</option>
+        </select>
+
+        <h3 style="margin-top: 2rem;">Automated Steps</h3>
+        <ul style="margin-left: 2rem; margin-bottom: 2rem; color: var(--text-light);">
+            <li>Missing numerical values will be filled with the median.</li>
+            <li>Missing categorical values will be filled with the most frequent category.</li>
+            <li>Categorical features will be One-Hot Encoded.</li>
+            <li>Numerical features will be Standardized (mean=0, variance=1).</li>
+            <li>The dataset will be split using a fixed random seed for reproducibility.</li>
+        </ul>
+
+        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">Run Preprocessing &
+            Generate ANN Architecture</button>
+    </form>
+</div>
+{% endblock %}

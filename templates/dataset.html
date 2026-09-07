@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header card">
+    <h2>Dataset Overview</h2>
+    <p>Filename: <strong>{{ filename }}</strong></p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Rows</h3>
+        <div class="value">{{ stats.num_rows }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Columns</h3>
+        <div class="value">{{ stats.num_cols }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Numerical Features</h3>
+        <div class="value">{{ stats.num_numerical }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Categorical Features</h3>
+        <div class="value">{{ stats.num_categorical }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Missing Values</h3>
+        <div class="value">{{ stats.missing_values }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Duplicates</h3>
+        <div class="value">{{ stats.duplicate_rows }}</div>
+    </div>
+</div>
+
+<div class="card target-selection-section">
+    <h3>Select Target Column</h3>
+    <p>Choose the column you want the neural network to predict.</p>
+    <form action="{{ url_for('dataset_overview') }}" method="POST" class="target-form">
+        <select name="target_column" required class="select-input">
+            <option value="" disabled selected>-- Select Target --</option>
+            {% for col in stats.columns_info %}
+            <option value="{{ col.name }}">{{ col.name }} ({{ col.type }})</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Proceed to Preprocessing</button>
+    </form>
+</div>
+
+<div class="card table-container">
+    <h3>Dataset Preview (First 15 Rows)</h3>
+    <div class="responsive-table">
+        <table>
+            <thead>
+                <tr>
+                    {% for col in stats.columns_info %}
+                    <th>
+                        <div class="col-name">{{ col.name }}</div>
+                        <div class="col-meta">{{ col.type }}</div>
+                        <div class="col-meta">Missing: {{ col.missing }}</div>
+                        <div class="col-meta">Unique: {{ col.unique }}</div>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in stats.preview %}
+                <tr>
+                    {% for col in stats.columns_info %}
+                    <td>{{ row[col.name] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

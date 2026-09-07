@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="upload-section card">
+    <h2>Upload Your Dataset</h2>
+    <p>Get started by uploading a tabular CSV dataset for your machine learning task.</p>
+
+    <form class="upload-form" action="{{ url_for('index') }}" method="POST" enctype="multipart/form-data">
+        <div class="drop-zone" id="drop-zone">
+            <span class="drop-zone__prompt">Drag & Drop CSV here or Click to upload</span>
+            <input type="file" name="file" id="file" class="drop-zone__input" accept=".csv" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="upload-btn">Upload and Analyze</button>
+    </form>
+
+    <div class="dataset-notes">
+        <p><strong>Note:</strong> AutoANN supports classification and regression datasets. Make sure your dataset has a
+            clear target column to predict.</p>
+    </div>
+</div>
+
+<script>
+    const dropZoneElement = document.querySelector(".drop-zone");
+    const inputElement = document.querySelector(".drop-zone__input");
+
+    dropZoneElement.addEventListener("click", (e) => {
+        inputElement.click();
+    });
+
+    inputElement.addEventListener("change", (e) => {
+        if (inputElement.files.length) {
+            updateThumbnail(dropZoneElement, inputElement.files[0]);
+        }
+    });
+
+    dropZoneElement.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZoneElement.classList.add("drop-zone--over");
+    });
+
+    ["dragleave", "dragend"].forEach((type) => {
+        dropZoneElement.addEventListener(type, (e) => {
+            dropZoneElement.classList.remove("drop-zone--over");
+        });
+    });
+
+    dropZoneElement.addEventListener("drop", (e) => {
+        e.preventDefault();
+        if (e.dataTransfer.files.length) {
+            inputElement.files = e.dataTransfer.files;
+            updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+        }
+        dropZoneElement.classList.remove("drop-zone--over");
+    });
+
+    function updateThumbnail(dropZoneElement, file) {
+        let prompt = dropZoneElement.querySelector(".drop-zone__prompt");
+        if (prompt) {
+            prompt.innerHTML = `<strong>Selected file:</strong> ${file.name}`;
+        }
+    }
+</script>
+{% endblock %}

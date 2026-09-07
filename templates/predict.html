@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+    <h2>Prediction Interface</h2>
+    <p style="color: var(--text-light); margin-bottom: 2rem;">
+        Enter values below to get a prediction from your trained Artificial Neural Network.
+    </p>
+
+    <div
+        style="background-color: #f8faff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 2rem; text-align: center;">
+        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">Prediction Engine is Ready!</h3>
+        <p>The neural network is loaded and ready to make predictions.</p>
+        <br>
+        <p style="color: var(--text-light); font-size: 0.9rem;">
+            <em>Note: The dynamic feature input form generation is available in the extended version.</em>
+        </p>
+        <br><br>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary">Return to Dashboard</a>
+        <a href="{{ url_for('index') }}" class="btn" style="background: #e9ecef; margin-left: 1rem;">Train New Model</a>
+    </div>
+</div>
+{% endblock %}

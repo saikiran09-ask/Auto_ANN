@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-header card">
+    <h2>Analysis & Results Dashboard</h2>
+    <p>Your Artificial Neural Network (ANN) model has been successfully trained and evaluated.</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>Problem Type</h3>
+        <div class="value">{{ problem_type }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>Input Features</h3>
+        <div class="value">{{ arch.input_dim }}</div>
+    </div>
+    {% if problem_type == 'Classification' %}
+    <div class="stat-card">
+        <h3>Accuracy</h3>
+        <div class="value">{{ "%.2f"|format(metrics.accuracy * 100) }}%</div>
+    </div>
+    <div class="stat-card">
+        <h3>F1 Score</h3>
+        <div class="value">{{ "%.2f"|format(metrics.f1 * 100) }}%</div>
+    </div>
+    {% else %}
+    <div class="stat-card">
+        <h3>R² Score</h3>
+        <div class="value">{{ "%.2f"|format(metrics.r2) }}</div>
+    </div>
+    <div class="stat-card">
+        <h3>RMSE</h3>
+        <div class="value">{{ "%.2f"|format(metrics.rmse) }}</div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card" style="margin-top: 2rem;">
+    <h2>How AutoANN Built Your Model</h2>
+    <p style="margin-bottom: 1rem; color: var(--text-light);">This is the exact architecture of the Neural Network built
+        dynamically for your dataset:</p>
+
+    <div style="background-color: #f1f3f5; padding: 1.5rem; border-radius: 8px;">
+        <ul style="list-style: none;">
+            <li style="margin-bottom: 0.5rem;"><strong>Input Layer:</strong> {{ arch.input_dim }} features</li>
+            <div style="font-size: 1.5rem; margin: 0.5rem 0; color: var(--primary-color);">↓</div>
+            {% for layer in arch.layers %}
+            <li style="margin-bottom: 0.5rem;">
+                <strong>{{ layer.type }} Layer:</strong>
+                {% if layer.type == 'Dense' %}
+                {{ layer.neurons }} neurons, {{ layer.activation }} activation
+                {% elif layer.type == 'Dropout' %}
+                rate {{ layer.rate }}
+                {% endif %}
+            </li>
+            {% if not loop.last %}
+            <div style="font-size: 1.5rem; margin: 0.5rem 0; color: var(--primary-color);">↓</div>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        <div style="margin-top: 1rem; border-top: 1px solid #ccc; padding-top: 1rem;">
+            <strong>Optimizer:</strong> {{ arch.optimizer | capitalize }} <br>
+            <strong>Loss Function:</strong> {{ arch.loss }}
+        </div>
+    </div>
+</div>
+
+<div style="text-align: center; margin-top: 2rem;">
+    <a href="{{ url_for('predict') }}" class="btn btn-primary" style="font-size: 1.25rem; padding: 1rem 2rem;">Go to
+        Prediction Interface</a>
+</div>
+{% endblock %}
